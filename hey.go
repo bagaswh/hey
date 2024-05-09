@@ -57,8 +57,9 @@ var (
 	t = flag.Int("t", 20, "")
 	z = flag.Duration("z", 0, "")
 
-	h2   = flag.Bool("h2", false, "")
-	cpus = flag.Int("cpus", runtime.GOMAXPROCS(-1), "")
+	h2         = flag.Bool("h2", false, "")
+	unixSocket = flag.String("unix-socket", "", "")
+	cpus       = flag.Int("cpus", runtime.GOMAXPROCS(-1), "")
 
 	disableCompression = flag.Bool("disable-compression", false, "")
 	disableKeepAlives  = flag.Bool("disable-keepalive", false, "")
@@ -92,6 +93,7 @@ Options:
   -a  Basic authentication, username:password.
   -x  HTTP Proxy address as host:port.
   -h2 Enable HTTP/2.
+  -unix-socket Connect to unix socket.
 
   -host	HTTP Host header.
 
@@ -232,6 +234,7 @@ func main() {
 		DisableKeepAlives:  *disableKeepAlives,
 		DisableRedirects:   *disableRedirects,
 		H2:                 *h2,
+		UnixSocket:         *unixSocket,
 		ProxyAddr:          proxyURL,
 		Output:             *output,
 	}

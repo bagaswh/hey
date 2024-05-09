@@ -17,9 +17,11 @@ package requester
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
 	"net/http/httptrace"
 	"net/url"
@@ -59,6 +61,9 @@ type Work struct {
 
 	// N is the total number of requests to make.
 	N int
+
+	// UnixSocket is the unix socket to connect to.
+	UnixSocket string
 
 	// C is the concurrency level, the number of concurrent workers to run.
 	C int
@@ -244,6 +249,11 @@ func (b *Work) runWorkers() {
 		DisableCompression:  b.DisableCompression,
 		DisableKeepAlives:   b.DisableKeepAlives,
 		Proxy:               http.ProxyURL(b.ProxyAddr),
+	}
+	if b.UnixSocket != "" {
+		tr.DialContext = func(ctx context.Context, _, _ string) (net.Conn, error) {
+			return net.Dial("unix", b.UnixSocket)
+		}
 	}
 	if b.H2 {
 		http2.ConfigureTransport(tr)
